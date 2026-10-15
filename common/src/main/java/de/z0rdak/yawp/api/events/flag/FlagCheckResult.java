@@ -1,0 +1,69 @@
+package de.z0rdak.yawp.api.events.flag;
+
+import de.z0rdak.yawp.core.flag.FlagContext;
+import de.z0rdak.yawp.core.flag.FlagState;
+import de.z0rdak.yawp.core.flag.IFlag;
+import de.z0rdak.yawp.core.region.IProtectedRegion;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * Represents the result of a flag check.
+ * Contains the responsible region, the flag, the position, the player and the result.
+ */
+public final class FlagCheckResult {
+
+    private final FlagCheckRequest flagCheck;
+
+    @Nullable
+    private final IProtectedRegion responsibleRegion;
+
+    @Nullable
+    private final IFlag flag;
+
+    private FlagState result;
+
+    public FlagCheckResult(FlagCheckRequest flagCheck, FlagState state, @Nullable IProtectedRegion responsibleRegion, @Nullable IFlag flag) {
+        this.flagCheck = flagCheck;
+        this.responsibleRegion = responsibleRegion;
+        this.result = state;
+        this.flag = flag;
+    }
+
+    /**
+     */
+    public FlagCheckResult(FlagCheckRequest flagCheck, FlagContext flagContext) {
+        this.flagCheck = flagCheck;
+        this.responsibleRegion = flagContext.region();
+        this.flag = flagContext.flag();
+        BlockState blockState = flagCheck.getBlockState();
+        this.result = flagContext.resultingState(blockState == null ? null : blockState.getBlockHolder());
+    }
+
+    public static FlagCheckResult Undefined(FlagCheckRequest flagCheck) {
+        return new FlagCheckResult(flagCheck, FlagState.UNDEFINED, null, null);
+    }
+
+    @Nullable
+    public IProtectedRegion getResponsible() {
+        return this.responsibleRegion;
+    }
+
+    public FlagCheckRequest getFlagCheck() {
+        return flagCheck;
+    }
+
+    public FlagState getFlagState() {
+        return result;
+    }
+
+    public void setFlagState(FlagState result) {
+        this.result = result;
+    }
+
+    @Nullable
+    public IFlag getFlag() {
+        return this.flag;
+    }
+
+}
